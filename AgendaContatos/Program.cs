@@ -1,7 +1,45 @@
-﻿using System.Threading.Tasks.Sources;
+﻿using System.Diagnostics.Metrics;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks.Sources;
 using AgendaContatos;
 
+string path = @"C:\\Users\\" + System.Environment.UserName + "\\";
+string contactlist = path + "listacontato.txt";
+
+if (File.Exists(contactlist) == false)
+{
+    using (var file = new StreamWriter(contactlist))
+    {
+        var text = new StringBuilder();
+        file.Write(text);
+    }
+}
 List<Contact> phonebook = new List<Contact>();
+LoadFromFile(contactlist, phonebook);
+
+List<Contact> LoadFromFile(string path, List<Contact> phone)
+{
+    if (File.Exists(path))
+    {
+        StreamReader sr = new StreamReader(path);
+        while (!sr.EndOfStream)
+        {
+            Address address = new Address();
+            string[] book = sr.ReadLine().Split(",");
+            string name = book[0];
+            string phones = book[1];
+            address.Street = book[2];
+            address.City = book[3];
+            address.State = book[4];
+            address.PostalCode = book[5];
+            address.Country = book[6];
+            phone.Add(new(name, phones,address));
+        }
+        sr.Close();
+    }
+    return phone;
+}
 
 int op;
 do
@@ -12,12 +50,15 @@ do
     {
         case 1:
             phonebook.Add(CreateContact());
+            SaveToFile(phonebook);
             break;
         case 2:
             EditContact();
+            SaveToFile(phonebook);
             break;
         case 3:
             phonebook.Remove(DeleteContact());
+            SaveToFile(phonebook);
             break;
         case 4:
             PrintPhoneBook();
@@ -30,6 +71,16 @@ do
             break;
     }
 } while (true);
+
+void SaveToFile(List<Contact> phonebook)
+{
+    StreamWriter sw = new(contactlist);
+    foreach (var item in phonebook)
+    {
+        sw.Write(item.ToFile());
+    }
+    sw.Close();
+}
 
 void EditContact()
 {
@@ -97,12 +148,23 @@ Contact DeleteContact()
 
 Contact CreateContact()
 {
+    Address newaddress = new Address();
     Console.WriteLine("Informe o nome: ");
     string n = Console.ReadLine();
 
     Console.WriteLine("Informe o telefone: ");
     var t = Console.ReadLine();
 
+    Console.WriteLine("Digite o nome da nova rua: ");
+    newaddress.Street = Console.ReadLine();
+    Console.WriteLine("Digite o nome da nova cidade: ");
+    newaddress.City = Console.ReadLine();
+    Console.WriteLine("Digite o nome do novo estado: ");
+    newaddress.State = Console.ReadLine();
+    Console.WriteLine("Digite o nome do novo país: ");
+    newaddress.Country = Console.ReadLine();
+    Console.WriteLine("Digite o novo cep: ");
+    newaddress.PostalCode = Console.ReadLine();
     foreach (var item in phonebook)
     {
         while (item.Phone.Equals(t))
@@ -112,7 +174,7 @@ Contact CreateContact()
             t = Console.ReadLine();
         }
     }
-    Contact contact = new Contact(n, t);
+    Contact contact = new Contact(n, t,newaddress);
     return contact;
 }
 

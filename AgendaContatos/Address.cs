@@ -8,11 +8,11 @@ namespace AgendaContatos
 {
     internal class Address
     {
-        public string Street;
-        public string City;
-        public string State;
-        public string PostalCode;
-        public string Country;
+        public string? Street;
+        public string? City;
+        public string? State;
+        public string? PostalCode;
+        public string? Country;
 
         public Address() 
         {
@@ -52,6 +52,11 @@ namespace AgendaContatos
         public override string ToString()
         {
             return "\n\nEndereço: " + Street + "\nEstado: " + State+"\nPaís: " + Country + "\nCidade: " + City + "\nCEP: " + PostalCode + "\n\n";
+        }
+
+        public string ToFile()
+        {
+            return Street +"," + State + "," + Country + "," + City + "," + PostalCode;
         }
     }
 }

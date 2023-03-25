@@ -13,11 +13,11 @@ namespace AgendaContatos
         public string Phone { get; set; }
         public string? Email { get; set; }
 
-        public Contact(string n, string p) 
+        public Contact(string n, string p, Address address) 
         {
             this.Name = n;
             this.Phone = p;
-            this.Address = new Address();
+            this.Address = address;
         }
 
         public void EditALL() 
@@ -71,6 +71,10 @@ namespace AgendaContatos
         public override string ToString() 
         {
             return $"Nome : {Name} \nTelefone {Phone} {Address}";
+        }
+        public string ToFile()
+        {
+            return Name + "," + Phone + "," + Address.ToFile() + "\n";
         }
     }
 }
